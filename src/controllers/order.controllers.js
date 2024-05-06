@@ -1,66 +1,95 @@
-import { NotFoundError,BadRequestError } from "../errors/index.js";
-import asyncWrapper from "../middleware/sync.js";
-import Order from "../models/order.models.js";
-import { validationResult } from "express-validator";
+// order.controllers.js
 
-export const addOrder = async(req,res,next)=>{
+import { validationResult } from "express-validator";
+import OrderModel from "../models/order.models.js";
+import MenuItem from "../models/menu.models.js";
+import userModel from "../models/users.models.js";
+import { sendEmail } from "../utils/emailNotification.js"; // Importing sendEmail function
+
+export const createOrder = async (req, res) => {
+  try {
     const errors = validationResult(req);
-    if(!errors.isEmpty()){
-        throw new BadRequestError(errors.array()[0].msg);
+    if (!errors.isEmpty()) {
+      return res.status(400).json({ message: "Validation failed", errors: errors.array() });
     }
-    try{
-        const order = new Order(req.body);
-        await order.save();
-        res.status(201).send(order);
-    }catch(error){
-        next(error);
+
+    const { customerId, selectedMenuItems, shippingAddress } = req.body;
+
+    // Fetch menu items and their prices
+    const menuItemIds = selectedMenuItems.map(item => item.itemId);
+    const menuItems = await MenuItem.find({ _id: { $in: menuItemIds } });
+
+    // Calculate total amount and total items
+    let totalAmount = 0;
+    const itemsWithPrice = selectedMenuItems.map(selectedItem => {
+      const menuItem = menuItems.find(item => item._id.toString() === selectedItem.itemId);
+      const itemTotalPrice = menuItem.price * selectedItem.quantity;
+      totalAmount += itemTotalPrice;
+      return { ...selectedItem, name: menuItem.name, price: menuItem.price, totalItemPrice: itemTotalPrice };
+    });
+    const totalItems = itemsWithPrice.reduce((total, item) => total + item.quantity, 0);
+
+    // Create the order
+    const order = new OrderModel({
+      customer: customerId,
+      selectedMenuItems: itemsWithPrice,
+      totalItems: totalItems,
+      totalAmount: totalAmount,
+      status: "pending",
+      shippingAddress: shippingAddress,
+    });
+
+    await order.save();
+
+    // Send email notification to the user
+    const user = await userModel.findById(customerId);
+    const recipientEmail = user.email;
+    const subject = "Your order has been received";
+    const body = `Dear ${user.firstname},\n\nYour order has been received successfully.\n\n`;
+    const itemsInfo = itemsWithPrice.map(item => `Item: ${item.name}, Quantity: ${item.quantity}, Price: ${item.price}, Total Price: ${item.totalItemPrice}`).join('\n');
+    const orderInfo = `${body}Order Items:\n${itemsInfo}\n\nTotal amount: ${totalAmount}\n\nThank you for your order!`;
+    sendEmail(recipientEmail, subject, orderInfo); // Using sendEmail function from emailNotification.js
+
+    res.status(201).json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to create order. Please try again later." });
+  }
+};
+
+export const fetchOrders = async (req, res) => {
+  try {
+    const orders = await OrderModel.find({})
+      .populate({
+        path: "customer",
+        select: "email firstname lastname" 
+      });
+
+    res.status(200).json(orders);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to fetch orders. Please try again later." });
+  }
+};
+
+export const updateOrderStatus = async (req, res) => {
+  try {
+    const orderId = req.params.id;
+    const { status } = req.body;
+
+    const order = await OrderModel.findByIdAndUpdate(
+      orderId,
+      { status: status },
+      { new: true }
+    );
+
+    if (!order) {
+      return res.status(404).json({ message: "Order not found" });
     }
-}
-export const getOrder = (req, res) =>{
-    Order.find().then((orders)=>{
-        res.status(200).send(orders);
-    }).catch((error)=>{
-        next(error);
-    });
-}
-export const getOrderById = (req, res,next) =>{
-    const id = req.params.id;
-    Order.findById(id).then((order)=>{
-        if(!order){
-            throw new NotFoundError("Order not found");
-        }
-        res.status(200).send(order);
-    }).catch((e)=>{
-        next(e);
-    });
-}
-export const updateOrder = (req,res,next) =>{
-    const id = req.params.id;
-    const updates = Object.keys(req.body);
-    const allowedUpdates = ["status"];
-    const isValidOperation = updates.every((update)=>{
-        return allowedUpdates.includes(update);
-    });
-    if(!isValidOperation){
-        throw new BadRequestError("Invalid updates");
-    }
-    Order.findByIdAndUpdate(id,req.body,{new:true,runValidators:true}).then((order)=>{
-        if(!order){
-            throw new NotFoundError("Order not found");
-        }
-        res.status(200).send(order);
-    }).catch((e)=>{
-        next(e);
-    });
-}
-export const deleteOrder = (req, res,next) => {
-    const id = req.params.id;
-    Order.findByIdAndDelete(id).then((order)=>{
-        if(!order){
-            throw new NotFoundError("Order not found");
-        }
-        res.status(200).send(order);
-    }).catch((e)=>{
-        next(e);
-    });
-}
+
+    res.status(200).json(order);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Failed to update order status. Please try again later." });
+  }
+};

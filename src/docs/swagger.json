@@ -1,0 +1,690 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "title": "QUICK BITE APP",
+    "description": "API documentation for a Food Delivery App",
+    "version": "1.0.0"
+  },
+  "host": "localhost:3000",
+  "basePath": "/api/v1",
+  "schemes": ["http", "https"],
+  "paths": {
+    "/auth/signup": {
+      "post": {
+        "summary": "SIGN UP",
+        "description": "SIGN UP",
+        "tags": ["Authentication"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Authentication"
+            },
+            "required": true,
+            "description": "signup object"
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "User registered successfully"
+          }
+        }
+      }
+    },
+    "/auth/signin": {
+      "post": {
+        "summary": "LOGIN",
+        "description": "LOGIN IN AN ALREADY EXISTING ACCOUNT",
+        "tags": ["Authentication"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/Authentication"
+            },
+            "required": true,
+            "description": "SIGN INTO YOUR ACCOUNT"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "LOGIN SUCCESSFUL"
+          },
+          "404": {
+            "description": "Account not found"
+          }
+        }
+      }
+    },
+    "/user/updatePassword/{userId}": {
+      "put": {
+        "summary": "UPDATE PASSWORD",
+        "description": "UPDATE USER PASSWORD",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "name": "userId",
+            "in": "path",
+            "description": "ID of the user",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdatePassword"
+            },
+            "required": true,
+            "description": "Updated password object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password updated successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/user/resetPassword": {
+      "post": {
+        "summary": "RESET PASSWORD",
+        "description": "RESET USER PASSWORD",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/ResetPassword"
+            },
+            "required": true,
+            "description": "Reset password object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Password reset successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/user/deleteUser/{id}": {
+      "delete": {
+        "summary": "DELETE USER",
+        "description": "DELETE USER PROFILE",
+        "tags": ["User"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the user profile to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "User profile deleted successfully"
+          },
+          "404": {
+            "description": "User not found"
+          }
+        }
+      }
+    },
+    "/order/add": {
+      "post": {
+        "summary": "order",
+        "description": "PLACE A NEW ORDER",
+        "tags": ["order"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/order"
+            },
+            "required": true,
+            "description": "New order object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order placed successfully"
+          }
+        }
+      }
+    },
+    "/order/retrieve/{id}": {
+      "get": {
+        "summary": "ORDER STATUS",
+        "description": "GET THE STATUS OF AN ORDER",
+        "tags": ["Order"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the order",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Order status retrieved successfully"
+          },
+          "404": {
+            "description": "Order not found"
+          }
+        }
+      }
+    },
+    "/menu/add": {
+      "post": {
+        "summary": "CREATE MENU ITEM",
+        "description": "CREATE A NEW MENU ITEM",
+        "tags": ["Menu"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateMenuItem"
+            },
+            "required": true,
+            "description": "New menu item object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu item created successfully"
+          }
+        }
+      }
+    },
+    "/menu/retrieve": {
+      "get": {
+        "summary": "GET ALL MENU ITEMS",
+        "description": "GET DETAILS OF ALL MENU ITEMS",
+        "tags": ["Menu"],
+        "responses": {
+          "200": {
+            "description": "Menu items retrieved successfully"
+          }
+        }
+      }
+    },
+    "/menu/retrieve/{id}": {
+      "get": {
+        "summary": "GET MENU ITEM BY ID",
+        "description": "GET DETAILS OF A SPECIFIC MENU ITEM BY ID",
+        "tags": ["Menu"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the menu item",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu item details retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/CreateMenuItem"
+            }
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    },
+    "/menu/update/{id}": {
+      "put": {
+        "summary": "UPDATE MENU ITEM",
+        "description": "UPDATE DETAILS OF A SPECIFIC MENU ITEM",
+        "tags": ["Menu"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the menu item to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateMenuItem"
+            },
+            "required": true,
+            "description": "Updated menu item details"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu item updated successfully"
+          },
+          "400": {
+            "description": "Bad Request. Invalid input data."
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    },
+    "/menu/delete/{id}": {
+      "delete": {
+        "summary": "DELETE MENU ITEM",
+        "description": "DELETE A SPECIFIC MENU ITEM",
+        "tags": ["Menu"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the menu item to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Menu item deleted successfully"
+          },
+          "404": {
+            "description": "Menu item not found"
+          }
+        }
+      }
+    }
+,    
+    "/restaurant/add": {
+      "post": {
+        "summary": "CREATE RESTAURANT",
+        "description": "CREATE A NEW RESTAURANT",
+        "tags": ["Restaurant"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/CreateRestaurant"
+            },
+            "required": true,
+            "description": "New restaurant object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant created successfully"
+          }
+        }
+      }
+    },
+    "/restaurant/list": {
+      "get": {
+        "summary": "GET ALL RESTAURANTS",
+        "description": "GET DETAILS OF ALL RESTAURANTS",
+        "tags": ["Restaurant"],
+        "responses": {
+          "200": {
+            "description": "Restaurant details retrieved successfully"
+          }
+        }
+      }
+    },
+    "/restaurant/list/{id}": {
+      "get": {
+        "summary": "GET RESTAURANT BY ID",
+        "description": "GET DETAILS OF A SPECIFIC RESTAURANT BY ID",
+        "tags": ["Restaurant"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the restaurant",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant details retrieved successfully",
+            "schema": {
+              "$ref": "#/definitions/Restaurant"
+            }
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      }
+    },
+    "/restaurant/update/{id}": {
+      "put": {
+        "summary": "UPDATE RESTAURANT",
+        "description": "UPDATE DETAILS OF A SPECIFIC RESTAURANT",
+        "tags": ["Restaurant"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the restaurant to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateRestaurant"
+            },
+            "required": true,
+            "description": "Updated restaurant details"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant updated successfully"
+          },
+          "400": {
+            "description": "Bad Request. Invalid input data."
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      }
+    },
+    "/restaurant/delete/{id}": {
+      "delete": {
+        "summary": "DELETE RESTAURANT",
+        "description": "DELETE A SPECIFIC RESTAURANT",
+        "tags": ["Restaurant"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the restaurant to delete",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Restaurant deleted successfully"
+          },
+          "404": {
+            "description": "Restaurant not found"
+          }
+        }
+      }
+    },
+    "/cart/add": {
+      "post": {
+        "summary": "ADD TO CART",
+        "description": "ADD AN ITEM TO THE CART",
+        "tags": ["Cart"],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/AddToCart"
+            },
+            "required": true,
+            "description": "New item object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item added to cart successfully"
+          }
+        }
+      }
+    },
+    "/cart/update/{id}": {
+      "put": {
+        "summary": "UPDATE CART ITEM",
+        "description": "UPDATE AN ITEM IN THE CART",
+        "tags": ["Cart"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the cart item to update",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "in": "body",
+            "name": "body",
+            "schema": {
+              "$ref": "#/definitions/UpdateCartItem"
+            },
+            "required": true,
+            "description": "Updated item object"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Cart item updated successfully"
+          },
+          "404": {
+            "description": "Cart item not found"
+          }
+        }
+      }
+    },
+    "/cart/remove/{id}": {
+      "delete": {
+        "summary": "REMOVE FROM CART",
+        "description": "REMOVE AN ITEM FROM THE CART",
+        "tags": ["Cart"],
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "ID of the cart item to remove",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Item removed from cart successfully"
+          },
+          "404": {
+            "description": "Cart item not found"
+          }
+        }
+      }
+    }
+  },
+  "definitions": {
+    "Authentication": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "password": {
+          "type": "string"
+        }
+      },
+      "required": ["email", "password"]
+    },
+    "UpdatePassword": {
+      "type": "object",
+      "properties": {
+        "oldPassword": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      },
+      "required": ["oldPassword", "newPassword"]
+    },
+    "ResetPassword": {
+      "type": "object",
+      "properties": {
+        "email": {
+          "type": "string"
+        },
+        "newPassword": {
+          "type": "string"
+        }
+      },
+      "required": ["email", "newPassword"]
+    },
+    "AddToCart": {
+      "type": "object",
+      "properties": {
+        "item": {
+          "type": "string"
+        },
+        "quantity": {
+          "type": "integer"
+        }
+      },
+      "required": ["item", "quantity"]
+    },
+    "UpdateCartItem": {
+      "type": "object",
+      "properties": {
+        "quantity": {
+          "type": "integer"
+        }
+      },
+      "required": ["quantity"]
+    },
+    "CreateMenuItem": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "price": {
+          "type": "number"
+        },
+        "category": {
+          "type": "string"
+        },
+        "restaurant": {
+        "type": "Schema.Types.ObjectId",
+         " ref": "'RestaurantModel",
+          "required": "true"
+      }
+      },
+      "required": ["name", "description", "price", "category"]
+    },
+    "CreateRestaurant": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": "string"
+        },
+        "description": {
+          "type": "string"
+        },
+        "location": {
+          "type": "string"
+        },
+        "phoneNumber": {
+          "type": "string"
+        },
+        "menu": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "itemName": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              },
+              "price": {
+                "type": "number"
+              }
+            },
+            "required": ["itemName", "description", "price"]
+          }
+        },
+        "openingHours": {
+          "type": "string"
+        },
+        "deliveryOptions": {
+          "type": "string"
+        }
+      },
+      "required": ["name", "description", "location", "phoneNumber"]
+    },
+    "order": {
+      "type": "object",
+      "properties": {
+        "customer": {
+          "type": "string",
+          "description": "ID of the customer placing the order"
+        },
+        "selectedMenuItems": {
+          "type": "array",
+          "items": {
+            "type": "object",
+            "properties": {
+              "itemId": {
+                "type": "string",
+                "description": "ID of the menu item"
+              },
+              "quantity": {
+                "type": "integer",
+                "description": "Quantity of the menu item in the order"
+              }
+            },
+            "required": ["itemId", "quantity"]
+          },
+          "description": "Array of selected menu items with their quantities"
+        },
+        "totalItems": {
+          "type": "integer",
+          "description": "Total number of items in the order"
+        },
+        "totalAmount": {
+          "type": "number",
+          "description": "Total amount of the order"
+        },
+        "status": {
+          "type": "string",
+          "enum": ["pending", "confirmed", "shipped", "delivered", "cancelled"],
+          "description": "Status of the order"
+        },
+        "payment": {
+          "type": "string",
+          "description": "ID of the payment associated with the order"
+        },
+        "shippingAddress": {
+          "type": "string",
+          "description": "Shipping address for the order"
+        }
+      },
+      "required": ["customer", "selectedMenuItems", "totalItems", "totalAmount", "status", "payment", "shippingAddress"]
+    }
+  }
+}

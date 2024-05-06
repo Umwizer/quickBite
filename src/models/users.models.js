@@ -27,6 +27,14 @@ const UserSchema = new Schema(
       type: String,
       required: true,
     },
+    otp:{
+        type:Number,
+        required: true,
+    },
+    optExpires:{
+        type:Date,
+        required: false,
+    }
   },
   {
     toJSON: {

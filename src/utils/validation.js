@@ -33,8 +33,8 @@ export const menuValidation = [
     body("restaurant","restaurant of ordered food is required").not().isEmpty()
 ]
 export const orderValidation = [
-    body("customer","customer identity is required").not().isEmpty(),
-    body("items","items identity is required").not().isEmpty(),
-    body("total","total number of items is required").not().isEmpty(),
+    //body("customer","customer identity is required").not().isEmpty(),
+    // body("MenuItem","items identity is required").not().isEmpty(),
+    // body("total","total number of items is required").not().isEmpty(),
 
 ]
